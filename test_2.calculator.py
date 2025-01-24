@@ -21,26 +21,22 @@ def result(self):
 def test_calculator(driver):
     driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
 
-# Ввод в поле delay значение 45  
-def delay(self, time: str):
-        driver.find_element(By.CSS_SELECTOR, "#delay").clear()
-        driver.find_element(By.CSS_SELECTOR, "#delay").send_keys(45)
-
-# Нажатие кнопок 
-        driver.find_element(By.XPATH, '//span[text()="7"]').click()
-        driver.find_element(By.XPATH, '//span[text()="+"]').click()
-        driver.find_element(By.XPATH, '//span[text()="8"]').click()
-        driver.find_element(By.XPATH, '//span[text()="="]').click()
-
-# Используем явные ожидания для ожидания появления результата в течение 45 секунд
-        waiter=WebDriverWait(driver, 45)
-        waiter.until(
-             EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#calculator > div.top > div'), '15')  
-)
-
-# Проверка результата
-        result = WebDriverWait(driver, 46).until(
-        EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#calculator > div.top > div'), '15')
+    # Установка задержки
+    delay_field = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "#delay"))
     )
-        res = "15"
-        assert result == res
+    delay_field.clear()
+    delay_field.send_keys("45")
+
+    # Нажатие кнопок
+    buttons = ["7", "+", "8", "="]
+    for button in buttons:
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, f'//span[text()="{button}"]'))
+        ).click()
+
+    # Ожидание результата
+    result = WebDriverWait(driver, 45).until(
+        EC.text_to_be_present_in_element((By.CSS_SELECTOR, "#calculator > div.top > div"), "15")
+    )
+    assert result, "Результат не совпадает с ожидаемым: 15"
